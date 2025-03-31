@@ -1,214 +1,161 @@
-# ms_fabric_de_project
+# Microsoft Fabric Data Engineering Project
 
-📌 In this project, I built a complete end-to-end data warehouse solution using Microsoft Fabric, following the Medallion Architecture. The pipeline starts by ingesting raw CSV files stored in GitHub. These datasets go through structured layers — Bronze for raw data, Silver for cleaned and transformed data, and Gold for dimensional modeling in a star schema using Fabric’s Data Warehouse. Finally, I connected the warehouse to Power BI to build a dashboard for data visualization. This project showcases my hands-on experience with Microsoft Fabric ecosystem.
+This project demonstrates the end-to-end development of a data warehouse solution using Microsoft Fabric, based on the Medallion Architecture (Bronze, Silver, Gold). The data pipeline is designed to ingest, clean, transform, model, and visualize structured datasets using Microsoft Fabric’s powerful data processing and analytics capabilities.
 
-Table of Content
+The pipeline begins by extracting raw CSV files from GitHub, storing them in Microsoft Fabric’s Data Lakehouse (Bronze Layer), and incrementally processing them through structured layers. The Silver Layer refines and transforms the data using PySpark and SQL, while the Gold Layer implements a dimensional model (star schema) within Microsoft Fabric Data Warehouse to support advanced analytics.
 
-· Data Source Overview
-∘ 📁 CRM System Files
-∘ 🧾 ERP System Files
-· Step 1: Setting Up the Fabric Workspace
-· Step 2: Bronze Layer — Data Ingestion
-∘ Creating the Bronze Lakehouse
-∘ Building the Data Pipeline to Load Data from GitHub
-∘ Raw Data Storage in Bronze Layer
-· Step 3: Silver Layer — Data Cleaning & Transformation
-∘ Creating the Silver Lakehouse
-∘ Data Cleaning & Transformation using Notebooks (PySpark & SQL)
-∘ Storing Processed Data in Silver Layer
-· Step 4: Gold Layer — Data Warehouse Modeling
-∘ Creating the Fabric Data Warehouse
-∘ Building the Star Schema (Dimensional Modeling)
-· Step 5: Data Visualization with Power BI
-∘ Connecting Power BI to the Data Warehouse
-∘ Building Dashboards and Visuals
-· Step 6: Workspace Lineage and Deploying Workspace
-∘ Check Workspace Lineage
-∘ Deploying Workspace
+Finally, the transformed and modeled data is connected to Power BI, enabling the creation of interactive dashboards that provide business insights.
 
-Data Source Overview
-For this project, I worked with six CSV files sourced from simulated CRM and ERP systems. These files were uploaded to my GitHub repository and served as the raw input for the data pipeline.
+## Architecture Overview 
 
-Source Files :
-https://github.com/DinuAR/FabricDataWarehouseSourceFiles.git
+![Project Architecture](MSF_Architecture.webp)
 
-📁 CRM System Files
-cust_info.csv – Contains basic customer information
-prd_info.csv – Includes product-level details
-sales_details.csv – Holds transaction-level sales data
-🧾 ERP System Files
-CUST_AZ12.csv – Adds customer attributes like birthdate and gender
-LOC_A101.csv – Maps customers to their countries
-PX_CAT_G1V2.csv – Provides product category and subcategory information
-These datasets represent a realistic business scenario with scattered data across different systems. The goal was to integrate, clean, and model this data into a unified structure for analytics using the Medallion Architecture in Microsoft Fabric.
+## Project Setup
 
-Step 1: Setting Up the Fabric Workspace
-To kick off the project, I created a new Microsoft Fabric workspace dedicated to this project. This workspace served as a centralized environment to organize and manage all the components I would use throughout the development lifecycle — such as Lakehouses, Data Pipelines, Notebooks, the Data Warehouse, and the Power BI.
+ Step 1: Setting Up the Microsoft Fabric Workspace: 
+ 
+ The first step involved creating a Microsoft Fabric Workspace, which served as a centralized environment for managing all project components, including:
+ 
+ * Lakehouses (Bronze, Silver)
+ * Data Pipelines for ingestion
+ * Fabric Notebooks for data transformation
+ * Data Warehouse for modeling
+ * Power BI Reports for visualization
 
+This workspace provided a seamless environment for development and deployment.
 
-Workspace
-Step 2: Bronze Layer — Data Ingestion
-Creating the Bronze Lakehouse
-Following the Medallion Architecture pattern, the next step was to create a Bronze Lakehouse in my workspace. This Lakehouse acts as the raw data storage layer, where I ingest and store the unprocessed source files exactly as they are.
+## Data Ingestion (Bronze Layer Processing)
+Step 2: Creating the Bronze Lakehouse
 
+The Bronze Layer acts as the raw data storage layer, preserving data in its original format for historical tracking.
+ 
+ * A Bronze Lakehouse was created to store raw CSV files extracted from GitHub.
+ * Data Pipelines were configured to automatically load files into the Lakehouse.
 
-Bronze Lakehouse
-Building the Data Pipeline to Load Data from GitHub
-To ingest the raw source data into the Bronze Lakehouse, I created a Fabric Data Pipeline. This pipeline was configured to extract the CSV files directly from my GitHub repository and load them into the Bronze layer.
+Step 3: Building the Data Pipeline for Ingestion
 
-This is the home page of Fabric Data Pipeline Item
+* Created a Data Pipeline in Microsoft Fabric.
+* Configured a connection to GitHub for data extraction.
+* Used a ForEach Activity to dynamically extract all files from the repository.
+* Set up a Copy Data Activity to load data into the Bronze Lakehouse.
+* Ran the Data Pipeline to verify data ingestion.
 
+Outcome: All raw source files were successfully stored in the Bronze Lakehouse.
 
-DataPipeline Home
-Configured copy data activity to extract CRM data files from Github
+## Data Cleaning & Transformation (Silver Layer Processing)
+Step 4: Creating the Silver Lakehouse
 
+The Silver Layer refines the raw data by handling missing values, normalizing formats, and preparing structured datasets.
 
-Copy Data Activity Configurations
-Created a new connection to connect with Github
+* A Silver Lakehouse was created to store the cleaned and processed data.
+* Fabric Notebooks (PySpark & SQL) were used for transformation.
 
+Step 5: Cleaning & Processing Data
+1. Loaded raw data from the Bronze Layer into a Fabric Notebook.
+2. Performed transformations using PySpark & SQL:
+     * Handled missing values.
+     * Standardized column names and formats.
+     * Enriched data with calculated fields.
+     * Filtered irrelevant records.
+3️. Saved the transformed data into the Silver Lakehouse.
 
-Setup New connection to Github
-Used a ForEach activity to dynamically extract all data files in Github CRM folder
+Outcome: Data is now structured, cleansed, and ready for modeling.
 
+## Data Modeling (Gold Layer Processing)
+Step 6: Setting Up Fabric Data Warehouse (Gold Layer)
 
-ForEach Activity to extract all files in a folder
-Set up the Copy Data activity inside the For Each activity.
+To enable advanced analytics and reporting, a Data Warehouse was created in Microsoft Fabric.     
 
+* Created a "gold" schema in the Data Warehouse.
+* Implemented Star Schema (Fact & Dimension Tables).
 
-CRM Data Extraction Activity
-Configured the same setup to extract ERP data from GitHub and connected the components to complete the source data extraction pipeline.
+Step 7: Implementing the Star Schema
 
+Created Dimension Tables:
 
-Complete Data Pipeline
-Running Data Pipeline.
+* dim_customers (Customer details, country, gender, birthdate).
+* dim_products (Product details, category, cost).
 
+Created Fact Table:
 
-Pipeline Status
-Raw Data Storage in Bronze Layer
-Once the data pipeline successfully runs, the source files are uploaded to the bronze data lake.
+* fact_sales (Sales transactions, product sales, revenue).
 
+Example SQL Code for Dimension Table:
 
-Bronze Data Lake with Source Files
-Step 3: Silver Layer — Data Cleaning & Transformation
-Creating the Silver Lakehouse
-After setting up the Bronze layer, I created a second Fabric Lakehouse to serve as the Silver Layer in the Medallion Architecture. This Silver Lakehouse is used to store cleaned, transformed, and enriched data derived from the raw source files in the Bronze layer.
+```
+CREATE VIEW gold.dim_customers AS 
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY cst_id) AS customer_key,
+    cu.cst_id AS customer_id,
+    cu.cst_firstname AS first_name,
+    cu.cst_lastname AS last_name,
+    lc.cntry AS country
+FROM Silver.dbo.crm_cust_info cu
+LEFT JOIN Silver.dbo.erp_loc_a101 lc
+ON cu.cst_key = lc.cid;
+```
 
+ Example SQL Code for Fact Table:
+ 
+```
+CREATE VIEW gold.fact_sales AS 
+SELECT 
+    sl.sls_ord_num AS order_number,
+    pr.product_key,
+    cs.customer_key,
+    sl.sls_order_dt AS order_date,
+    CAST(sl.sls_sales AS FLOAT) AS sales_amount,
+    CAST(sl.sls_quantity AS FLOAT) AS quantity
+FROM Silver.dbo.crm_sales_details sl
+LEFT JOIN gold.dim_products pr
+ON sl.sls_prd_key = pr.product_number
+LEFT JOIN gold.dim_customers cs
+ON sl.sls_cust_id = cs.customer_id;
+```
 
-Silver Lakehouse
-Data Cleaning & Transformation using Notebooks (PySpark & SQL)
-To process the raw data stored in the Bronze Lakehouse, I created a Fabric Notebook. Using a combination of PySpark and SQL, I performed various data cleaning and transformation tasks — such as handling missing values, standardizing column formats, joining related datasets, and preparing the data for dimensional modeling.
+* Outcome: Data Warehouse is fully structured and optimized for analytical querying.
 
+## 5️⃣ Data Visualization in Power BI
 
-Fabric Notebook
+Step 8: Connecting Power BI to the Fabric Data Warehouse
 
-Fabric Notebook
-Storing Processed Data in Silver Layer
-Once the data cleaning and transformation were complete, I saved the processed datasets into the Silver Lakehouse. These cleaned files now represented a more structured and analytics-ready version of the original data.
+* Connected Power BI to the Fabric Data Warehouse.
+* Loaded gold schema tables into Power BI.
+* Built interactive dashboards with key insights.
 
+Step 9: Building Dashboards
 
-Silver Lakehouse
-Step 4: Gold Layer — Data Warehouse Modeling
-Creating the Fabric Data Warehouse
-Next, I created a Data Warehouse item in Microsoft Fabric to serve as the Gold Layer of the pipeline. This layer is designed to support advanced analytics and reporting by storing structured, query-optimized data. Using the cleaned and transformed datasets from the Silver Lakehouse, I began building the dimensional model.
+Created interactive Power BI reports showcasing:
+ * Sales Trends (Yearly, Monthly Analysis).
+ * Geographical Distribution of customers.
+ * Revenue Breakdown by product category.
+ * Customer Insights (Demographics & Purchase Behavior).
 
+Outcome: Fully interactive Power BI dashboard for business intelligence.
 
-Data Warehouse in Fabric
-Inside the Fabric Data Warehouse, I created a new schema named gold to logically organize the dimension tables and fact table.
+## Workspace Lineage & Deployment
 
-CREATE SCHEMA gold
-GO
-Building the Star Schema (Dimensional Modeling)
-To implement the star schema model, I created the dimension and fact tables as SQL views within the gold schema of the Data Warehouse.
+Step 10: Checking Workspace Lineage
 
-Dimension Tables: dim_customers, dim_products
+* Verified data flow from Bronze → Silver → Gold → Power BI.
 
-create view gold.dim_customers as
-select
-row_number() over (order by cst_id) as customer_key,
-cu.cst_id as customer_id,
-cu.cst_key as customer_number,
-cu.cst_firstname as first_name,
-cu.cst_lastname as last_name,
-lc.cntry as country,
-cu.cst_marital_status as marital_status,
-case when cu.cst_gndr != 'n/a' then cu.cst_gndr
-     else coalesce(bd.gen, 'n/a')
-end as gender,
-bd.bdate as birth_date,
-cu.cst_create_date as create_date
-from Silver.dbo.crm_cust_info cu
-left join Silver.dbo.erp_cust_az12 bd
-on cu.cst_key = bd.cid
-left join Silver.dbo.erp_loc_a101 lc
-on cu.cst_key = lc.cid
-create view gold.dim_products as
-select
-row_number() over (order by prd_start_dt, prd_key) as product_key,
-pr.prd_id as product_id,
-pr.prd_key as product_number,
-pr.prd_nm as product_name,
-pr.cat_id as category_id,
-ct.cat as category,
-ct.subcat as subcategory,
-ct.maintenance,
-pr.prd_cost as cost,
-pr.prd_line as product_line,
-pr.prd_start_dt as start_date
-from Silver.dbo.crm_prd_info pr
-left join Silver.dbo.erp_df_px_cat_g1v2 ct
-on pr.cat_id = ct.id
-where pr.prd_end_dt is null
-Fact Table: fact_sales
+Step 11: Deploying to Production
 
-CREATE VIEW gold.fact_sales as 
-select 
-sl.sls_ord_num as order_number,
-pr.product_key,
-cs.customer_key,
-sl.sls_order_dt as order_date,
-sl.sls_ship_dt as shipping_date,
-sl.sls_due_dt as due_date,
-CAST(sl.sls_sales AS float) as sales_amount,
-CAST(sl.sls_quantity AS float) as quantity,
-CAST(sl.sls_price AS float) as price
-from Silver.dbo.crm_sales_details sl
-left join gold.dim_products pr
-on sl.sls_prd_key = pr.product_number
-left join gold.dim_customers cs
-on sl.sls_cust_id = cs.customer_id
+* Deployed the Fabric Workspace into a Production Environment.
+* Set up a Deployment Pipeline to manage workspace releases.
+* Ensured data refresh automation for real-time insights.
 
-Gold Layer
+Outcome: The entire pipeline is now production-ready!
 
-Star Schema Model
-Step 5: Data Visualization with Power BI
-Connecting Power BI to the Data Warehouse
-To bring the data to life, I connected the Fabric Data Warehouse to Power BI. This allowed me to seamlessly access the gold schema views (dim_customer, dim_product, and fact_sales) and use them as the foundation for building an interactive report.
+## Project Outcomes & Benefits
 
+* End-to-End Data Pipeline built using Microsoft Fabric.
+* Structured Medallion Architecture (Bronze → Silver → Gold).
+* Optimized Data Warehouse with Star Schema Modeling.
+* Automated Data Ingestion & Transformation Workflows.
+* Power BI Dashboard providing business insights.
+* Seamless Deployment & Scalability with Fabric’s Cloud Environment.
 
-Data Warehouse tables in Power BI
-Building Dashboards and Visuals
-Here is the Power BI report I built using the data from the Fabric Data Warehouse.
+## Conclusion 
 
-
-PowerBI Report
-Step 6: Workspace Lineage and Deploying Workspace
-Check Workspace Lineage
-
-Checking Workspace Lineage
-Here is the lineage view of all the items in my Microsoft Fabric workspace.
-
-
-My Workspace Lineage
-Deploying Workspace
-Once the development phase was complete, I deployed all my workspace items — Lakehouses, Pipelines, Notebooks, Data Warehouse, and Power BI report — into a new Microsoft Fabric workspace. This represented a clean, production-like environment.
-
-
-Newly created production environment
-New Deployment Pipeline
-
-
-Deployment Pipeline Home
-✅ Pipeline Successfully Deployed! 🚀
-
-
-Deployed Pipeline
+This project showcases how the Microsoft Fabric ecosystem can be leveraged to create a robust, high-performing data engineering solution, designed to scale and adapt to real-world business needs. With this foundation, future projects can be built with enhanced data integration, governance, and visualization capabilities.
